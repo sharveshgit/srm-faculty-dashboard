@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SRM Faculty Portal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- HEADER WITH PERMANENT LOGO -->
+    <header class="header">
+        <img src="assets/srm-logo.png" alt="SRM Logo" class="logo" onerror="this.onerror=null;this.src='assets/srm-logo.svg'">
+        <h1>SRM Institute of Science and Technology</h1>
+    </header>
+
+    <div class="container">
+
+        <!-- LEFT INFO -->
+        <div class="left-section">
+            <h2>Dear Faculty,</h2>
+            <p>Welcome to SRM Faculty Portal.</p>
+            <p>Track academic progress, events, and completion status.</p>
+            <p>View reports, download documents, and monitor performance.</p>
+        </div>
+
+        <!-- LOGIN CARD -->
+        <div class="login-card">
+            <h3>Faculty Login</h3>
+
+            <input id="netid" type="text" placeholder="NetID" autocomplete="username">
+            <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+
+            <div class="captcha">
+                <input id="captchaInput" type="text" placeholder="Enter Captcha">
+                <div class="captcha-panel">
+                    <span id="captchaText" class="captcha-text">S2YX7</span>
+                    <button id="refreshCaptcha" type="button" class="captcha-refresh" title="Refresh Captcha">â†»</button>
+                </div>
+            </div>
+
+            <button id="loginButton" type="button">Login</button>
+            <div id="loginStatus" class="login-status" aria-live="polite"></div>
+        </div>
+
+    </div>
+
+    <!-- Example fallback images -->
+    <img src="assets/srm-logo.png" alt="logo-1" style="display:none" onerror="this.onerror=null;this.src='assets/srm-logo.svg'">
+    <img src="assets/srm-logo.png" alt="logo-2" style="display:none" onerror="this.onerror=null;this.src='assets/srm-logo.svg'">
+
+    <script>
+        const captchaText = document.getElementById('captchaText');
+        const captchaInput = document.getElementById('captchaInput');
+        const loginStatus = document.getElementById('loginStatus');
+        const loginButton = document.getElementById('loginButton');
+        const refreshCaptcha = document.getElementById('refreshCaptcha');
+        const netid = document.getElementById('netid');
+        const password = document.getElementById('password');
+
+        const generateCaptcha = () => {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let value = '';
+            for (let i = 0; i < 6; i++) {
+                value += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            captchaText.textContent = value;
+            captchaInput.value = '';
+            loginStatus.textContent = '';
+            loginStatus.className = 'login-status';
+        };
+
+        const showStatus = (message, type) => {
+            loginStatus.textContent = message;
+            loginStatus.className = `login-status ${type}`;
+        };
+
+        const handleLogin = () => {
+            const idValue = netid.value.trim();
+            const passwordValue = password.value.trim();
+            const captchaValue = captchaInput.value.trim().toUpperCase();
+            const expectedCaptcha = captchaText.textContent.trim();
+
+            if (!idValue || !passwordValue || !captchaValue) {
+                showStatus('Fill in all fields before logging in.', 'error');
+                return;
+            }
+
+            if (captchaValue !== expectedCaptcha) {
+                showStatus('Captcha does not match. Please try again.', 'error');
+                generateCaptcha();
+                return;
+            }
+
+            showStatus('Login successful! Redirecting to the portal...', 'success');
+            setTimeout(() => {
+                window.location.href = './faculty-dashboard.html';
+            }, 800);
+        };
+
+        refreshCaptcha.addEventListener('click', generateCaptcha);
+        loginButton.addEventListener('click', handleLogin);
+        generateCaptcha();
+    </script>
+
+</body>
+</html>
+

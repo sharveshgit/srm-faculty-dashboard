@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --univ-blue: #1f6fb6;
+}
+
+body {
+  @apply bg-gray-50 text-gray-800;
+}
+
+.dark body {
+  @apply bg-gray-900 text-gray-100;
+}

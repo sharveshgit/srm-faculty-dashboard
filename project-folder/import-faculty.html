@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Import Faculty Data - SRM</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .import-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+        }
+        .import-container h2 {
+            color: #2f6fa3;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #2f6fa3;
+            box-shadow: 0 0 4px rgba(47, 111, 163, 0.3);
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: #2f6fa3;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .submit-btn:hover {
+            background: #1e4f7a;
+        }
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status-message {
+            margin-top: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            display: none;
+        }
+        .status-message.success {
+            background: #d4edda;
+            color: #0b703f;
+            display: block;
+        }
+        .status-message.error {
+            background: #f8d7da;
+            color: #b72f2f;
+            display: block;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2f6fa3;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <img src="assets/srm-logo.png" alt="SRM Logo" class="logo" onerror="this.onerror=null;this.src='assets/srm-logo.svg'">
+        <h1>SRM Faculty Data Import</h1>
+    </header>
+
+    <div class="import-container">
+        <a href="./faculty-dashboard.html" class="back-link">← Back to Dashboard</a>
+        
+        <h2>Add Faculty Member</h2>
+        <p style="color: #666;">Fill in the form below to add a new faculty member or import data.</p>
+
+        <form id="facultyForm">
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" placeholder="Dr. John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label for="department">Department *</label>
+                <input type="text" id="department" name="department" placeholder="Computer Science" required>
+            </div>
+
+            <div class="form-group">
+                <label for="workStatus">Work Status *</label>
+                <select id="workStatus" name="workStatus" required>
+                    <option value="">Select Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="incomplete">Incomplete</option>
+                    <option value="processing">In Process</option>
+                    <option value="review">HOD Review</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="percentage">Completion % *</label>
+                <input type="number" id="percentage" name="percentage" min="0" max="100" placeholder="85" required>
+            </div>
+
+            <div class="form-group">
+                <label for="file">Upload File (Optional)</label>
+                <input type="file" id="file" name="file" accept=".pdf,.xlsx,.csv,.xls">
+                <small style="color: #999;">Allowed: PDF, Excel, CSV (max 5MB)</small>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
+            <div id="statusMessage" class="status-message"></div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('facultyForm');
+        const statusMessage = document.getElementById('statusMessage');
+        const submitBtn = document.getElementById('submitBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            statusMessage.className = 'status-message';
+
+            try {
+                const formData = new FormData(form);
+
+                const response = await fetch('http://localhost:5000/api/faculty/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusMessage.className = 'status-message success';
+                    statusMessage.textContent = '✅ ' + data.message;
+                    form.reset();
+                    setTimeout(() => {
+                        window.location.href = './faculty-dashboard.html';
+                    }, 1500);
+                } else {
+                    statusMessage.className = 'status-message error';
+                    statusMessage.textContent = '❌ Error: ' + (data.error || 'Unknown error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                statusMessage.className = 'status-message error';
+                statusMessage.textContent = '❌ Error: ' + error.message;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SRM Student Portal</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="main-container">
+
+    <!-- LEFT SIDE -->
+    <div class="left-section">
+
+        <div class="header">
+            <!-- Inline header SVG (falls back visually if PNG isn't provided) -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" aria-label="SRM Header" role="img">
+              <rect width="480" height="160" rx="12" fill="#2c3e94" />
+              <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="64" fill="#fff">SRM</text>
+            </svg>
+            <div class="logo-text">
+                <h1>SRM</h1>
+                <p>Institute of Science & Technology</p>
+            </div>
+        </div>
+
+        <div class="text-box">
+            <h2>Dear Faculty,</h2>
+
+            <p>Welcome to SRMIST FACULTY PORTAL.</p>
+
+            <p>
+                You can access the portal to know your academic and financial details.
+            </p>
+
+            <p>
+                Login using your NetID credentials.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="right-section">
+
+        <div class="login-card">
+
+            <div class="login-header">
+                Faculty Member
+            </div>
+
+            <label>NetID (without @srmist.edu.in)</label>
+            <input type="text" placeholder="Enter NetID">
+
+            <label>Password</label>
+            <input type="password" placeholder="Enter Password">
+
+            <label>Captcha</label>
+
+            <div class="captcha-box">
+                <span id="captchaText">A7K9P</span>
+                <button onclick="generateCaptcha()">↻</button>
+            </div>
+
+            <input type="text" placeholder="Enter Captcha">
+
+            <div class="forgot">Forgot Password?</div>
+
+            <button class="login-btn">Login</button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>

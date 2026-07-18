@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SRM Faculty Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="header dashboard-header">
+        <img src="assets/srm-logo.png" alt="SRM Logo" class="logo" onerror="this.onerror=null;this.src='assets/srm-logo.svg'">
+        <div>
+            <h1>SRM Faculty Stage & Work Tracker</h1>
+            <p class="subtitle">Permanent faculty records, stage progress, and HOD review dashboard.</p>
+        </div>
+        <a href="./index.html" class="dashboard-back-link">Back to Login</a>
+    </header>
+
+    <nav class="dashboard-nav">
+        <button class="nav-tab active" data-tab="faculty">Faculty Data</button>
+        <button class="nav-tab" data-tab="tasks">Tasks</button>
+        <button class="nav-tab" data-tab="projects">Projects</button>
+        <button class="nav-tab" data-tab="events">Events</button>
+        <button class="nav-tab" data-tab="attendance">Attendance</button>
+    </nav>
+
+    <div class="dashboard-layout">
+        <aside class="dashboard-sidebar">
+            <div class="sidebar-brand">
+                <span class="sidebar-icon">🏠</span>
+                <strong>Dashboard</strong>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-filter="all">
+                    <span class="nav-icon">📋</span>
+                    <span>All Faculty</span>
+                </button>
+                <button class="nav-item" data-filter="completed">
+                    <span class="nav-icon">✅</span>
+                    <span>Completed</span>
+                </button>
+                <button class="nav-item" data-filter="incomplete">
+                    <span class="nav-icon">⚠️</span>
+                    <span>Incomplete</span>
+                </button>
+                <button class="nav-item" data-filter="processing">
+                    <span class="nav-icon">⏳</span>
+                    <span>In Process</span>
+                </button>
+                <button class="nav-item" data-filter="review">
+                    <span class="nav-icon">🔎</span>
+                    <span>HOD Review</span>
+                </button>
+            </nav>
+            <div class="sidebar-actions">
+                <a href="./import-faculty.html" class="sidebar-action-button" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+                    <span class="nav-icon">➕</span>
+                    <span>Import Data</span>
+                </a>
+                <button id="downloadPdfButton" class="sidebar-action-button secondary">
+                    <span class="nav-icon">📄</span>
+                    <span>Download PDF</span>
+                </button>
+                <p id="importMessage" class="import-message">Click "Import Data" to add new faculty records.</p>
+            </div>
+        </aside>
+
+        <main class="dashboard-container">
+            <!-- FACULTY DATA TAB -->
+            <div class="tab-content active" id="faculty-tab">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button id="downloadCsvBtn" class="add-btn" style="background: #4CAF50;">📥 Download CSV</button>
+                    <label class="add-btn" style="background: #2196F3; cursor: pointer; display: inline-block;">
+                        📤 Import CSV
+                        <input type="file" id="csvImportInput" accept=".csv" hidden>
+                    </label>
+                </div>
+            <section class="overview-cards">
+                <article class="card">
+                    <h3>Total Faculty</h3>
+                    <p class="card-value" id="totalCount">0</p>
+                    <p class="card-note">Active faculty records</p>
+                </article>
+                <article class="card">
+                    <h3>Completed</h3>
+                    <p class="card-value success" id="completedCount">0</p>
+                    <p class="card-note">Fully completed stage work</p>
+                </article>
+                <article class="card">
+                    <h3>Incomplete</h3>
+                    <p class="card-value warning" id="incompleteCount">0</p>
+                    <p class="card-note">Needs follow-up</p>
+                </article>
+                <article class="card">
+                    <h3>Needs HOD Review</h3>
+                    <p class="card-value error" id="reviewCount">0</p>
+                    <p class="card-note">Verified but pending review</p>
+                </article>
+            </section>
+
+            <section class="dashboard-section">
+                <div class="section-header">
+                    <h2>Faculty Work Stage Data</h2>
+                    <span id="currentFilterLabel">Showing all faculty</span>
+                </div>
+                <div class="table-wrapper">
+                    <table class="faculty-table" id="facultyTable">
+                        <thead>
+                            <tr>
+                                <th>Faculty ID</th>
+                                <th>Name</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th>Stage</th>
+                                <th>Work Count</th>
+                                <th>Completion</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-status="completed" data-stage="Stage 4">
+                                <td>F1234</td>
+                                <td>Dr. S. Vijayan</td>
+                                <td>Computer Science</td>
+                                <td>Completed</td>
+                                <td>Stage 4</td>
+                                <td>42</td>
+                                <td>91%</td>
+                            </tr>
+                            <tr data-status="processing" data-stage="Stage 3">
+                                <td>F2178</td>
+                                <td>Dr. N. Ramakrishnan</td>
+                                <td>Mathematics</td>
+                                <td>In Process</td>
+                                <td>Stage 3</td>
+                                <td>29</td>
+                                <td>76%</td>
+                            </tr>
+                            <tr data-status="incomplete" data-stage="Stage 2">
+                                <td>F3321</td>
+                                <td>Dr. M. Priya</td>
+                                <td>Physics</td>
+                                <td>Incomplete</td>
+                                <td>Stage 2</td>
+                                <td>18</td>
+                                <td>54%</td>
+                            </tr>
+                            <tr data-status="completed" data-stage="Stage 5">
+                                <td>F4490</td>
+                                <td>Dr. A. Ramesh</td>
+                                <td>Electronics</td>
+                                <td>Completed</td>
+                                <td>Stage 5</td>
+                                <td>54</td>
+                                <td>100%</td>
+                            </tr>
+                            <tr data-status="review" data-stage="Stage 3">
+                                <td>F5832</td>
+                                <td>Dr. R. Uma</td>
+                                <td>Chemistry</td>
+                                <td>HOD Review</td>
+                                <td>Stage 3</td>
+                                <td>26</td>
+                                <td>72%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="dashboard-section grid-layout">
+                <article class="card">
+                    <h3>Daily Data Upload</h3>
+                    <p>47 rows uploaded today • 3 faculty rows require correction before completion.</p>
+                </article>
+                <article class="card">
+                    <h3>Events and Downloads</h3>
+                    <ul>
+                        <li>New faculty joining verification</li>
+                        <li>Incomplete work evidence report</li>
+                        <li>Stage completion summary export</li>
+                    </ul>
+                </article>
+            </section>
+            </div>
+
+            <!-- TASKS TAB -->
+            <div class="tab-content" id="tasks-tab">
+                <h2>Tasks</h2>
+                <button id="addTaskBtn" class="add-btn">+ Add Task</button>
+                <div id="taskList" class="task-list"></div>
+            </div>
+
+            <!-- PROJECTS TAB -->
+            <div class="tab-content" id="projects-tab">
+                <h2>Projects</h2>
+                <button id="addProjectBtn" class="add-btn">+ Add Project</button>
+                <div id="projectList" class="project-list"></div>
+            </div>
+
+            <!-- EVENTS TAB -->
+            <div class="tab-content" id="events-tab">
+                <h2>Events</h2>
+                <button id="addEventBtn" class="add-btn">+ Add Event</button>
+                <div id="eventList" class="event-list"></div>
+            </div>
+
+            <!-- ATTENDANCE TAB -->
+            <div class="tab-content" id="attendance-tab">
+                <h2>Attendance</h2>
+                <button id="addAttendanceBtn" class="add-btn">+ Record Attendance</button>
+                <div id="attendanceList" class="attendance-list"></div>
+            </div>
+        </main>
+    </div>
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+        const filterButtons = document.querySelectorAll('.nav-item');
+        const navTabs = document.querySelectorAll('.nav-tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const facultyTableBody = document.querySelector('#facultyTable tbody');
+        const currentFilterLabel = document.getElementById('currentFilterLabel');
+        const downloadPdfButton = document.getElementById('downloadPdfButton');
+        const totalCount = document.getElementById('totalCount');
+        const completedCount = document.getElementById('completedCount');
+        const incompleteCount = document.getElementById('incompleteCount');
+        const reviewCount = document.getElementById('reviewCount');
+
+        let allFacultyData = [];
+        let currentFilter = 'all';
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        let projects = JSON.parse(localStorage.getItem('projects')) || [];
+        let events = JSON.parse(localStorage.getItem('events')) || [];
+        let attendance = JSON.parse(localStorage.getItem('attendance')) || [];
+
+        const filterMap = {
+            all: 'All faculty',
+            completed: 'Completed faculty',
+            incomplete: 'Incomplete faculty',
+            processing: 'In process faculty',
+            review: 'Faculty pending HOD review'
+        };
+
+        // ========== TAB SWITCHING ==========
+        navTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const activeTab = tab.dataset.tab;
+                
+                // Hide all tabs
+                tabContents.forEach(content => content.classList.remove('active'));
+                navTabs.forEach(t => t.classList.remove('active'));
+                
+                // Show selected tab
+                document.getElementById(`${activeTab}-tab`).classList.add('active');
+                tab.classList.add('active');
+
+                // Load data based on tab
+                if (activeTab === 'tasks') displayTasks();
+                else if (activeTab === 'projects') displayProjects();
+                else if (activeTab === 'events') displayEvents();
+                else if (activeTab === 'attendance') displayAttendance();
+            });
+        });
+
+        // ========== FACULTY DATA ==========
+        // Fetch Faculty Data from Backend
+        const fetchFacultyData = async () => {
+            try {
+                const response = await fetch(`${API_BASE}/faculty`);
+                if (!response.ok) throw new Error('Failed to fetch data');
+                
+                allFacultyData = await response.json();
+                updateFacultyDashboard();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                facultyTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #b72f2f;">⚠️ Failed to load data. Ensure backend is running on port 5000.</td></tr>`;
+            }
+        };
+
+        // Update Faculty Dashboard with Data
+        const updateFacultyDashboard = () => {
+            // Calculate stats
+            const stats = {
+                total: allFacultyData.length,
+                completed: allFacultyData.filter(f => f.workStatus === 'completed').length,
+                incomplete: allFacultyData.filter(f => f.workStatus === 'incomplete').length,
+                processing: allFacultyData.filter(f => f.workStatus === 'processing').length,
+                review: allFacultyData.filter(f => f.workStatus === 'review').length
+            };
+
+            totalCount.textContent = stats.total;
+            completedCount.textContent = stats.completed;
+            incompleteCount.textContent = stats.incomplete;
+            reviewCount.textContent = stats.review;
+
+            applyFilter('all');
+        };
+
+        // Apply Faculty Filter
+        const applyFilter = (filter) => {
+            currentFilter = filter;
+            let filtered = allFacultyData;
+
+            if (filter !== 'all') {
+                filtered = allFacultyData.filter(f => f.workStatus === filter);
+            }
+
+            // Render Table
+            facultyTableBody.innerHTML = '';
+            if (filtered.length === 0) {
+                facultyTableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #999;">No records found</td></tr>`;
+                return;
+            }
+
+            filtered.forEach((faculty, index) => {
+                const statusEmoji = {
+                    'completed': '✅',
+                    'incomplete': '⚠️',
+                    'processing': '⏳',
+                    'review': '🔎'
+                };
+
+                const row = `
+                    <tr data-status="${faculty.workStatus}" data-id="${faculty._id}">
+                        <td>${faculty._id.substring(0, 6).toUpperCase()}</td>
+                        <td>${faculty.name}</td>
+                        <td>${faculty.department}</td>
+                        <td>${statusEmoji[faculty.workStatus]} ${faculty.workStatus.charAt(0).toUpperCase() + faculty.workStatus.slice(1)}</td>
+                        <td>Stage ${3}</td>
+                        <td>${Math.floor(faculty.percentage / 10)}</td>
+                        <td>${faculty.percentage}%</td>
+                    </tr>
+                `;
+                facultyTableBody.innerHTML += row;
+            });
+
+            currentFilterLabel.textContent = `Showing ${filterMap[filter]}`;
+            filterButtons.forEach(button => button.classList.toggle('active', button.dataset.filter === filter));
+        };
+
+        // Faculty Filter Button Listeners
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => applyFilter(button.dataset.filter));
+        });
+
+        // PDF Download
+        downloadPdfButton.addEventListener('click', () => {
+            window.print();
+        });
+
+        // ========== TASKS ==========
+        function displayTasks() {
+            const container = document.getElementById('taskList');
+            container.innerHTML = '';
+            if (tasks.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">No tasks yet. Click "Add Task" to create one.</p>';
+                return;
+            }
+            tasks.forEach((task, idx) => {
+                container.innerHTML += `
+                    <div class="task-card">
+                        <h4>${task.title}</h4>
+                        <p><strong>Faculty:</strong> ${task.faculty}</p>
+                        <p><strong>Date:</strong> ${task.date}</p>
+                        <p><strong>Status:</strong> <span class="status-badge ${task.status.toLowerCase()}">${task.status}</span></p>
+                        <button onclick="deleteTask(${idx})" class="delete-btn">Delete</button>
+                    </div>
+                `;
+            });
+        }
+
+        function openTaskForm() {
+            const form = `
+                <div class="modal-overlay" onclick="closeModal(this)">
+                    <div class="modal" onclick="event.stopPropagation()">
+                        <span class="close-btn" onclick="closeModal(this.parentElement.parentElement)">&times;</span>
+                        <h3>Add Task</h3>
+                        <input id="taskTitle" placeholder="Task Title"><br>
+                        <input id="taskFaculty" placeholder="Faculty Name"><br>
+                        <input id="taskDate" type="date"><br>
+                        <select id="taskStatus">
+                            <option>Completed</option>
+                            <option>Incomplete</option>
+                            <option>In Progress</option>
+                        </select><br>
+                        <button onclick="saveTask()">Save Task</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', form);
+        }
+
+        function saveTask() {
+            const task = {
+                title: document.getElementById('taskTitle').value,
+                faculty: document.getElementById('taskFaculty').value,
+                date: document.getElementById('taskDate').value,
+                status: document.getElementById('taskStatus').value
+            };
+            if (!task.title || !task.faculty || !task.date) {
+                alert('All fields are required');
+                return;
+            }
+            tasks.push(task);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            closeModal(document.querySelector('.modal-overlay'));
+            displayTasks();
+        }
+
+        function deleteTask(idx) {
+            tasks.splice(idx, 1);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            displayTasks();
+        }
+
+        // ========== PROJECTS ==========
+        function displayProjects() {
+            const container = document.getElementById('projectList');
+            container.innerHTML = '';
+            if (projects.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">No projects yet. Click "Add Project" to create one.</p>';
+                return;
+            }
+            projects.forEach((project, idx) => {
+                container.innerHTML += `
+                    <div class="project-card">
+                        <h4>${project.name}</h4>
+                        <p><strong>Lead:</strong> ${project.lead}</p>
+                        <p><strong>Start Date:</strong> ${project.startDate}</p>
+                        <p><strong>Status:</strong> <span class="status-badge ${project.status.toLowerCase()}">${project.status}</span></p>
+                        <button onclick="deleteProject(${idx})" class="delete-btn">Delete</button>
+                    </div>
+                `;
+            });
+        }
+
+        function openProjectForm() {
+            const form = `
+                <div class="modal-overlay" onclick="closeModal(this)">
+                    <div class="modal" onclick="event.stopPropagation()">
+                        <span class="close-btn" onclick="closeModal(this.parentElement.parentElement)">&times;</span>
+                        <h3>Add Project</h3>
+                        <input id="projectName" placeholder="Project Name"><br>
+                        <input id="projectLead" placeholder="Project Lead"><br>
+                        <input id="projectStartDate" type="date"><br>
+                        <select id="projectStatus">
+                            <option>Planning</option>
+                            <option>In Progress</option>
+                            <option>Completed</option>
+                        </select><br>
+                        <button onclick="saveProject()">Save Project</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', form);
+        }
+
+        function saveProject() {
+            const project = {
+                name: document.getElementById('projectName').value,
+                lead: document.getElementById('projectLead').value,
+                startDate: document.getElementById('projectStartDate').value,
+                status: document.getElementById('projectStatus').value
+            };
+            if (!project.name || !project.lead || !project.startDate) {
+                alert('All fields are required');
+                return;
+            }
+            projects.push(project);
+            localStorage.setItem('projects', JSON.stringify(projects));
+            closeModal(document.querySelector('.modal-overlay'));
+            displayProjects();
+        }
+
+        function deleteProject(idx) {
+            projects.splice(idx, 1);
+            localStorage.setItem('projects', JSON.stringify(projects));
+            displayProjects();
+        }
+
+        // ========== EVENTS ==========
+        function displayEvents() {
+            const container = document.getElementById('eventList');
+            container.innerHTML = '';
+            if (events.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">No events yet. Click "Add Event" to create one.</p>';
+                return;
+            }
+            events.forEach((event, idx) => {
+                container.innerHTML += `
+                    <div class="event-card">
+                        <h4>${event.title}</h4>
+                        <p><strong>Date:</strong> ${event.date}</p>
+                        <p><strong>Location:</strong> ${event.location}</p>
+                        <p><strong>Type:</strong> ${event.type}</p>
+                        <button onclick="deleteEvent(${idx})" class="delete-btn">Delete</button>
+                    </div>
+                `;
+            });
+        }
+
+        function openEventForm() {
+            const form = `
+                <div class="modal-overlay" onclick="closeModal(this)">
+                    <div class="modal" onclick="event.stopPropagation()">
+                        <span class="close-btn" onclick="closeModal(this.parentElement.parentElement)">&times;</span>
+                        <h3>Add Event</h3>
+                        <input id="eventTitle" placeholder="Event Title"><br>
+                        <input id="eventDate" type="date"><br>
+                        <input id="eventLocation" placeholder="Location"><br>
+                        <select id="eventType">
+                            <option>Workshop</option>
+                            <option>Seminar</option>
+                            <option>Conference</option>
+                            <option>Meeting</option>
+                        </select><br>
+                        <button onclick="saveEvent()">Save Event</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', form);
+        }
+
+        function saveEvent() {
+            const event = {
+                title: document.getElementById('eventTitle').value,
+                date: document.getElementById('eventDate').value,
+                location: document.getElementById('eventLocation').value,
+                type: document.getElementById('eventType').value
+            };
+            if (!event.title || !event.date || !event.location) {
+                alert('All fields are required');
+                return;
+            }
+            events.push(event);
+            localStorage.setItem('events', JSON.stringify(events));
+            closeModal(document.querySelector('.modal-overlay'));
+            displayEvents();
+        }
+
+        function deleteEvent(idx) {
+            events.splice(idx, 1);
+            localStorage.setItem('events', JSON.stringify(events));
+            displayEvents();
+        }
+
+        // ========== ATTENDANCE ==========
+        function displayAttendance() {
+            const container = document.getElementById('attendanceList');
+            container.innerHTML = '';
+            if (attendance.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center;">No attendance records yet.</p>';
+                return;
+            }
+            attendance.forEach((record, idx) => {
+                container.innerHTML += `
+                    <div class="attendance-card">
+                        <h4>${record.faculty}</h4>
+                        <p><strong>Date:</strong> ${record.date}</p>
+                        <p><strong>Status:</strong> <span class="status-badge ${record.status.toLowerCase()}">${record.status}</span></p>
+                        <button onclick="deleteAttendance(${idx})" class="delete-btn">Delete</button>
+                    </div>
+                `;
+            });
+        }
+
+        function openAttendanceForm() {
+            const form = `
+                <div class="modal-overlay" onclick="closeModal(this)">
+                    <div class="modal" onclick="event.stopPropagation()">
+                        <span class="close-btn" onclick="closeModal(this.parentElement.parentElement)">&times;</span>
+                        <h3>Record Attendance</h3>
+                        <input id="attendanceFaculty" placeholder="Faculty Name"><br>
+                        <input id="attendanceDate" type="date"><br>
+                        <select id="attendanceStatus">
+                            <option>Present</option>
+                            <option>Absent</option>
+                            <option>Late</option>
+                        </select><br>
+                        <button onclick="saveAttendance()">Save</button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', form);
+        }
+
+        function saveAttendance() {
+            const record = {
+                faculty: document.getElementById('attendanceFaculty').value,
+                date: document.getElementById('attendanceDate').value,
+                status: document.getElementById('attendanceStatus').value
+            };
+            if (!record.faculty || !record.date) {
+                alert('All fields are required');
+                return;
+            }
+            attendance.push(record);
+            localStorage.setItem('attendance', JSON.stringify(attendance));
+            closeModal(document.querySelector('.modal-overlay'));
+            displayAttendance();
+        }
+
+        function deleteAttendance(idx) {
+            attendance.splice(idx, 1);
+            localStorage.setItem('attendance', JSON.stringify(attendance));
+            displayAttendance();
+        }
+
+        // ========== MODAL HELPERS ==========
+        function closeModal(element) {
+            if (element && element.classList && element.classList.contains('modal-overlay')) {
+                element.remove();
+            }
+        }
+
+        // ========== EVENT LISTENERS ==========
+        document.getElementById('addTaskBtn').addEventListener('click', openTaskForm);
+        document.getElementById('addProjectBtn').addEventListener('click', openProjectForm);
+        document.getElementById('addEventBtn').addEventListener('click', openEventForm);
+        document.getElementById('addAttendanceBtn').addEventListener('click', openAttendanceForm);
+        document.getElementById('downloadCsvBtn').addEventListener('click', downloadCSV);
+        document.getElementById('csvImportInput').addEventListener('change', importCSV);
+
+        // ========== CSV EXPORT ==========
+        function downloadCSV() {
+            if (allFacultyData.length === 0) {
+                alert('No faculty data to export');
+                return;
+            }
+
+            let csv = 'Faculty ID,Name,Department,Status,Completion %,Date\n';
+
+            allFacultyData.forEach(d => {
+                const date = d.createdAt ? new Date(d.createdAt).toLocaleDateString() : new Date().toLocaleDateString();
+                csv += `"${d._id.substring(0, 6)}","${d.name}","${d.department}","${d.workStatus}","${d.percentage}","${date}"\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `faculty_data_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert('✅ Faculty data exported to CSV');
+        }
+
+        // ========== CSV IMPORT ==========
+        function importCSV(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const lines = e.target.result.split('\n');
+                    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+                    
+                    let imported = 0;
+                    for (let i = 1; i < lines.length; i++) {
+                        if (!lines[i].trim()) continue;
+
+                        // Simple CSV parsing (handles quoted fields)
+                        const values = lines[i].split(',').map(v => v.replace(/^"|"$/g, '').trim());
+                        
+                        if (values.length < 3) continue;
+
+                        const newFaculty = {
+                            _id: 'csv_' + Math.random().toString(36).substr(2, 9),
+                            name: values[1] || 'Unknown',
+                            department: values[2] || 'N/A',
+                            workStatus: values[3]?.toLowerCase() || 'incomplete',
+                            percentage: parseInt(values[4]) || 0,
+                            createdAt: new Date(),
+                            file: null
+                        };
+
+                        // Only add if workStatus is valid
+                        if (['completed', 'incomplete', 'processing', 'review'].includes(newFaculty.workStatus)) {
+                            allFacultyData.push(newFaculty);
+                            imported++;
+                        }
+                    }
+
+                    if (imported > 0) {
+                        updateFacultyDashboard();
+                        alert(`✅ ${imported} faculty records imported successfully!`);
+                    } else {
+                        alert('⚠️ No valid records found in CSV');
+                    }
+                } catch (error) {
+                    console.error('CSV Import error:', error);
+                    alert('❌ Error importing CSV: ' + error.message);
+                }
+
+                // Reset input
+                event.target.value = '';
+            };
+
+            reader.readAsText(file);
+        }
+
+
+        // Initialize Dashboard
+        fetchFacultyData();
+
+        // Refresh faculty data every 10 seconds
+        setInterval(fetchFacultyData, 10000);
+    </script>
+</body>
+</html>
