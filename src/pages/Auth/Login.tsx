@@ -46,9 +46,14 @@ const LoginPage: React.FC = () => {
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center gap-4">
                   <img src="/logo-srm.svg" alt="SRM Logo" className="h-16 w-auto" />
-                  <div>
-                    <h1 className="text-3xl font-semibold">SRM Faculty Portal</h1>
-                    <p className="text-sm text-slate-500">SRM Ramapuram Institute of Science & Technology</p>
+                  <div className="space-y-1">
+                    <div className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
+                      SRM Ramapuram
+                    </div>
+                    <div>
+                      <h1 className="text-3xl font-semibold">SRM Faculty Portal</h1>
+                      <p className="text-sm text-slate-500">SRM Institute of Science & Technology</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -161,6 +166,12 @@ const LoginPage: React.FC = () => {
               </button>
             </form>
             <div className="mt-6 text-sm text-slate-500">Demo login works with any non-empty password.</div>
+            <div className="mt-4 text-sm text-slate-500">
+              Don't have an account?{' '}
+              <Link to="/signup" className="font-medium text-slate-900 hover:underline">
+                Sign up now
+              </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { initializeSeedData } from './utils/storage'
 import LoginPage from './pages/Auth/Login'
+import SignupPage from './pages/Auth/Signup'
 import ForgotPassword from './pages/Auth/ForgotPassword'
 import HomePage from './pages/HomePage'
 import FacultyDashboard from './pages/Faculty/Dashboard'
@@ -42,8 +43,9 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
         <Route
           path="/*"
           element={
