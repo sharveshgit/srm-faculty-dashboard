@@ -361,6 +361,38 @@ body {
     border-radius: 6px;
 }
 
+/* Ensure captcha input and panel share space correctly */
+.captcha input {
+    flex: 1 1 auto;
+    width: auto; /* override .login-card input width:100% */
+    box-sizing: border-box;
+    padding: 10px;
+    margin-top: 0;
+    font-size: 14px;
+    min-width: 120px;
+}
+
+.captcha-panel {
+    flex: 0 0 auto; /* keep captcha code size stable */
+}
+
+.captcha-text { font-size: 16px; }
+
+/* Ensure captcha input is focusable and sits above any nearby elements */
+.captcha {
+    position: relative;
+}
+
+.captcha input {
+    position: relative;
+    z-index: 2;
+    pointer-events: auto;
+}
+
+.captcha-panel {
+    z-index: 1;
+}
+
 .captcha-refresh {
     border: 1px solid #ccc;
     background: #fff;

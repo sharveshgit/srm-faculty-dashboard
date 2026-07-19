@@ -4,7 +4,8 @@ type User = { id: string; name: string; role: 'faculty' | 'hod'; email?: string 
 
 type AuthContextType = {
   user: User | null
-  login: (role: 'faculty' | 'hod', username: string) => void
+  // login now accepts optional id and email returned from auth provider
+  login: (role: 'faculty' | 'hod', username: string, id?: string, email?: string) => void
   logout: () => void
 }
 
@@ -25,8 +26,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) => {
   const [user, setUser] = useState<User | null>(() => getStoredUser())
 
-  const login = (role: 'faculty' | 'hod', username: string) => {
-    const u: User = { id: username, name: username, role }
+  const login = (role: 'faculty' | 'hod', username: string, id?: string, email?: string) => {
+    const u: User = { id: id || username, name: username, role, email }
     setUser(u)
     localStorage.setItem('fh_user', JSON.stringify(u))
   }

@@ -31,7 +31,7 @@
             <input id="password" type="password" placeholder="Password" autocomplete="current-password">
 
             <div class="captcha">
-                <input id="captchaInput" type="text" placeholder="Enter Captcha">
+                <input id="captchaInput" type="text" placeholder="Enter Captcha" tabindex="0">
                 <div class="captcha-panel">
                     <span id="captchaText" class="captcha-text">S2YX7</span>
                     <button id="refreshCaptcha" type="button" class="captcha-refresh" title="Refresh Captcha">â†»</button>
@@ -68,6 +68,11 @@
             loginStatus.textContent = '';
             loginStatus.className = 'login-status';
         };
+
+        // Make captcha code clickable to focus the input (helps when overlays interfere)
+        captchaText.addEventListener('click', () => {
+            captchaInput.focus();
+        });
 
         const showStatus = (message, type) => {
             loginStatus.textContent = message;

@@ -1,21 +1,12 @@
-type QueryResult = { data: any[] | null; error?: Error | null }
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 
-export const supabase = {
-  from(_table: string) {
-    return {
-      select: async (_columns?: string): Promise<QueryResult> => ({ data: [], error: null }),
-      insert: async (rows: any[]): Promise<QueryResult> => ({ data: rows, error: null }),
-    }
-  },
-  channel(_name: string) {
-    return {
-      on: function () {
-        return this
-      },
-      subscribe: async () => true,
-    }
-  },
-  removeChannel(_channel: unknown) {
-    return undefined
-  },
+const URL = (import.meta as any).env?.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL
+const KEY = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY
+
+let client: SupabaseClient | null = null
+if (URL && KEY) {
+  client = createClient(URL, KEY)
 }
+
+// Export a client when configured, otherwise a minimal stub so the app doesn't crash.
+export const supabase: SupabaseClient = (client as SupabaseClient) || ({} as SupabaseClient)
